@@ -30,6 +30,13 @@ This compact is organized as follows:
 * [Arrow Functions](#arrow-functions)
 * [Default Parameters](#default-parameters)
 * [Class and Subclass](#class-and-subclass)
+* [Symbols](#symbols)
+* [Sets](#sets)
+* [Weaksets](#weaksets)
+* [Maps](#maps)
+* [Weakmaps](#weakmaps)
+* [Promise](#promise)
+* [Generator](#generator)
 
 # Variable and Scope
 
@@ -762,6 +769,7 @@ myFavoriteFlavors.delete('strawberry');
 
 console.log(myFavoriteFlavors)
 ```
+
 ### Solution 17
 ```javascript
 // Generate a random graph
@@ -971,4 +979,48 @@ new Promise(function (resolve, reject) {
         resolve(sundae);
     }, Math.random() * 2000);
 });
+```
+
+# Generator
+* Return an iterable that is also an iterator
+* **function*** keyword creates a generator function
+* *yield* keyword yields the next value returned by the iterator, with done: false
+* *return v* exits the generator with { done: true, value: v }. v is not consumed by data consumers
+
+```javascript
+function *getLampIterator() { 
+    yield 'red'; 
+    yield 'green'; 
+    return 'lastValue'; 
+}
+
+let lampIterator = getLampIterator();
+console.log( lampIterator.next() ); // Object {value: "red", done: false}
+console.log( lampIterator.next() ); // Object {value: "green", done: false}
+console.log( lampIterator.next() ); // Object {value: "lastValue", done: true}
+```
+`
+Combining Generators
+```javascript
+let generator1 = function *() { ... };
+let generator2 = function *() { ... };
+
+let combinedGenerator = function *() {
+    yield *generator1();
+    yield *generator2();
+}
+```
+
+Passing parameters to iterables
+```javascript
+let greetings = function *() { 
+    let name = yield 'Hi!'; 
+    yield `Hello, ${ name }!`; 
+}
+
+let greetingIterator = greetings();
+
+console.log( greetingIterator.next() ); // Object {value: "Hi!", done: false}
+
+console.log( greetingIterator.next( 'Lewis' ) ); // Object {value: "Hello, Lewis!", done: false}
 ```
