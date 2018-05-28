@@ -1,7 +1,7 @@
 # ES6 - Compact
 
 This is a collection of exercises and features of **ECMAScript6 (ES6)**. 
-I used this compact to understand new features and improve my abilities with **Javascript** as well as ES6. Maybe can be helpful for you too.
+I used this compact to understand some new features and improve my abilities with **Javascript** as well as ES6. Maybe can be helpful for you too.
 If you need help with solutions, contact me or search on [MDN Documentation](https://developer.mozilla.org/en-US/) or at the programmers' best friend [Stack Overflow](https://stackoverflow.com/).
 
 ## Getting Started
@@ -25,7 +25,7 @@ This compact is organized as follows:
 * [Variables and Scope](#variable-and-scope)
 * [Template Literals](#template-literals)
 * [Destructuring](#destructuring)
-* [Iteration (For...of) Loops](#iteration-(for...of)-loops)
+* [Iteration (For...of) Loops](#iteration-loops)
 * [Spread Operator](#spread-operator)
 * [Arrow Functions](#arrow-functions)
 * [Default Parameters](#default-parameters)
@@ -281,7 +281,7 @@ const colors = `List of Colors
 
 console.log(colors);
 ```
-# Iteration (For...of) Loops
+# Iteration Loops
 The **for...of loop** is used to loop over any type of data that is iterable.
 
 You write a **for...of** loop almost exactly like you would write a **for...in** loop, except you swap out **in** with **of** and you can drop the index.
@@ -678,4 +678,297 @@ const bowl = {
   [Symbol('banana')]: { color: 'yellow', weight: 176.845 }
 };
 console.log(bowl); // Object {Symbol(apple): Object, Symbol(banana): Object, Symbol(orange): Object, Symbol(banana): Object}
+```
+
+
+# Sets
+In ES6, there’s a new built-in object that behaves like a mathematical set and works similarly to an array. This new object is conveniently called a "Set". The biggest differences between a set and an array are:
+
+* Sets are not indexed-based - you do not refer to items in a set based on their position in the set
+* items in a Set can’t be accessed individually
+
+Basically, a Set is an object that lets you store unique items. You can add items to a Set, remove items from a Set, and loop over a Set. These items can be either primitive values or objects.
+
+```javascript
+let colors = new Set();
+colors.add( 'red' );
+colors.add( 'green' );
+
+colors.size // 2
+colors.has( 'green' ) // true
+colors.delete( 'green' ) // true
+```
+
+```javascript
+const games = new Set(['Super Mario Bros.', 'Banjo-Kazooie', 'Mario Kart', 'Super Mario Bros.']);
+console.log(games); // Set {'Super Mario Bros.', 'Banjo-Kazooie', 'Mario Kart'}
+games.clear()
+console.log(games); // Set {}
+```
+
+### Exercise 16 - Dealing with Sets - [Solution Here](#solution-16)
+```javascript
+ /* Create a Set object and store it in a variable named `myFavoriteFlavors`. Add the following strings to the set:
+ *     - chocolate chip
+ *     - cookies and cream
+ *     - strawberry
+ *     - vanilla
+ *
+ * Then use the `.delete()` method to remove "strawberry" from the set.
+ */
+```
+
+### Exercise 17 - [**Graph Traversal**](http://marijnhaverbeke.nl/talks/es6_falsyvalues2015/exercises/#Graph_traversal) - [Solution Here](#solution-17)
+```javascript
+/*The code for this exercise generates a random graph—an array of nodes, each of which has a value and an array of edges to other nodes.
+
+Your task is to implement the function connectedValue which, starting at a node, traces through the graph by following edges, summing up the total value of all nodes connected to the start node (including the start node itself).
+
+The recursive exploring is the tricky part. You can use either a worklist (an array of nodes that have to be explored) or a recursive function. Use a Set object to track the nodes that you've already visited (to avoid going around in circles endlessly when the graph contains a cycle).
+
+The Set methods you'll need for that are .add(value) and .has(value).
+*/
+// Generate a random graph
+const graph = []
+for (let i = 0; i < 50; i++)
+  graph.push({value: Math.random(), edges: []})
+for (let i = 0; i < 100; i++) {
+  let from = graph[Math.floor(Math.random() * graph.length)]
+  let to   = graph[Math.floor(Math.random() * graph.length)]
+  if (from.edges.indexOf(to) != -1) continue
+  from.edges.push(to)
+}
+
+function connectedValue(node) {
+  // Your code here
+}
+
+console.log(connectedValue(graph[0]))
+console.log(connectedValue(graph[24]))
+console.log(connectedValue(graph[49]))
+```
+
+### Solution 16
+```javascript
+let myFavoriteFlavors = new Set();
+
+myFavoriteFlavors.add('chocolate chip');
+myFavoriteFlavors.add('strawberry');
+myFavoriteFlavors.add('cookies and cream');
+myFavoriteFlavors.add('vanilla');
+
+console.log(myFavoriteFlavors)
+myFavoriteFlavors.delete('strawberry');
+
+console.log(myFavoriteFlavors)
+```
+### Solution 17
+```javascript
+// Generate a random graph
+const graph = []
+for (let i = 0; i < 50; i++)
+  graph.push({value: Math.random(), edges: []})
+for (let i = 0; i < 100; i++) {
+  let from = graph[Math.floor(Math.random() * graph.length)]
+  let to   = graph[Math.floor(Math.random() * graph.length)]
+  if (from.edges.indexOf(to) != -1) continue
+  from.edges.push(to)
+}
+
+function connectNodes(node, nodeValues){
+  if(!nodeValues.has(node.value)){
+  	nodeValues.add(node.value);
+    node.edges.map(no => connectNodes(no, nodeValues))
+  }
+}
+
+function connectedValue(node) {
+	let nodeValues = new Set()
+    connectNodes(node, nodeValues);
+  	let total = 0;	
+  for(let nod of nodeValues){
+      total += nod
+    }
+  return total
+}
+
+
+console.log(connectedValue(graph[0]))
+console.log(connectedValue(graph[24]))
+console.log(connectedValue(graph[49]))
+```
+
+# Weaksets
+A WeakSet is just like a normal Set with a few key differences:
+
+* a WeakSet can only contain objects
+* a WeakSet is not iterable which means it can’t be looped over
+* a WeakSet does not have a .clear() method
+You can create a **WeakSet** just like you would a normal **Set**, except that you use the WeakSet constructor.
+
+```javascript
+let student1 = { name: 'James', age: 26, gender: 'male' };
+let student2 = { name: 'Julia', age: 27, gender: 'female' };
+let student3 = { name: 'Richard', age: 31, gender: 'male' };
+
+const roster = new WeakSet([student1, student2, student3]);
+console.log(roster); // WeakSet {Object {name: 'Julia', age: 27, gender: 'female'}, Object {name: 'Richard', age: 31, gender: 'male'}, Object {name: 'James', age: 26, gender: 'male'}}
+
+student3 = null;
+console.log(roster); // WeakSet {Object {name: 'Julia', age: 27, gender: 'female'}, Object {name: 'James', age: 26, gender: 'male'}}
+```
+
+### Exercise 18 - **Working with Weaksets (Udacity)** - [Solution Here](#solution-18)
+```javascript
+/*
+Create the following variables:
+
+- uniqueFlavors and give it the value of an empty WeakSet object
+- flavor1, and set it to the object { flavor: 'chocolate' }
+- flavor2, and set it to an object with a property of flavor and a value of your choice
+Use the .add() method to add the objects flavor1 and flavor2 to uniqueFlavors.
+
+Use the .add() method to add the flavor1 object to the uniqueFlavors set, again.
+*/
+```
+
+### Solution 18
+```javascript
+const flavor1 = { flavor: 'chocolate'}
+const flavor2 = { flavor: 'vanilla' }
+
+const uniqueFlavors = new WeakSet();
+uniqueFlavors.add(flavor1)
+uniqueFlavors.add(flavor2)
+console.log(uniqueFlavors)
+uniqueFlavors.add(flavor1)
+```
+
+# Maps
+Essentially, a Map is an object that lets you store key-value pairs where both the keys and the values can be objects, primitive values, or a combination of the two.
+
+```javascript
+const employees = new Map();
+
+employees.set('james.parkes@udacity.com', { 
+    firstName: 'James',
+    lastName: 'Parkes',
+    role: 'Content Developer' 
+});
+employees.set('julia@udacity.com', {
+    firstName: 'Julia',
+    lastName: 'Van Cleve',
+    role: 'Content Developer'
+});
+employees.set('richard@udacity.com', {
+    firstName: 'Richard',
+    lastName: 'Kalehoff',
+    role: 'Content Developer'
+});
+
+console.log(employees); // Map {'james.parkes@udacity.com' => Object {...}, 'julia@udacity.com' => Object {...}, 'richard@udacity.com' => Object {...}}
+
+employees.delete('julia@udacity.com');
+employees.delete('richard@udacity.com');
+console.log(employees); // Map {'james.parkes@udacity.com' => Object {firstName: 'James', lastName: 'Parkes', role: 'Course Developer'}}
+```
+
+```javascript
+const members = new Map();
+
+members.set('Evelyn', 75.68);
+members.set('Liam', 20.16);
+members.set('Sophia', 0);
+members.set('Marcus', 10.25);
+
+console.log(members.has('Xavier')); // false
+console.log(members.has('Marcus')); // true
+
+console.log(members.get('Evelyn')); // 75.68
+```
+
+### Exercise 19 - **Working with maps (Udacity)** - [Solution Here](#solution-19)
+```javascript
+const members = new Map();
+
+members.set('Evelyn', 75.68);
+members.set('Liam', 20.16);
+members.set('Sophia', 0);
+members.set('Marcus', 10.25);
+
+for (const member of members) {
+// YOUR CODE HERE
+}
+```
+
+### Solution 19
+```javascript
+const members = new Map();
+
+members.set('Evelyn', 75.68);
+members.set('Liam', 20.16);
+members.set('Sophia', 0);
+members.set('Marcus', 10.25);
+
+for (const member of members) {
+    let [name, value] = member
+    console.log(name, value);
+}
+```
+
+# Weakmaps
+A WeakMap is just like a normal Map with a few key differences:
+
+- a WeakMap can only contain objects as keys,
+- a WeakMap is not iterable which means it can’t be looped and
+- a WeakMap does not have a .clear() method.
+
+You can create a WeakMap just like you would a normal Map, except that you use the WeakMap constructor.
+```javascript
+const book1 = { title: 'Pride and Prejudice', author: 'Jane Austen' };
+const book2 = { title: 'The Catcher in the Rye', author: 'J.D. Salinger' };
+const book3 = { title: 'Gulliver’s Travels', author: 'Jonathan Swift' };
+
+const library = new WeakMap();
+library.set(book1, true);
+library.set(book2, false);
+library.set(book3, true);
+
+console.log(library); // WeakMap {Object {title: 'Pride and Prejudice', author: 'Jane Austen'} => true, Object {title: 'The Catcher in the Rye', author: 'J.D. Salinger'} => false, Object {title: 'Gulliver’s Travels', author: 'Jonathan Swift'} => true}
+
+book1 = null;
+console.log(library); // WeakMap {Object {title: 'The Catcher in the Rye', author: 'J.D. Salinger'} => false, Object {title: 'Gulliver’s Travels', author: 'Jonathan Swift'} => true}
+```
+
+# Promise
+A JavaScript Promise is created with the new Promise constructor function - new Promise(). A promise will let you start some work that will be done **asynchronously** and let you get back to your regular work. When you create the promise, you must give it the code that will be run asynchronously. You provide this code as the argument of the constructor function:
+
+```javascript
+new Promise(function () {
+    window.setTimeout(function createSundae(flavor = 'chocolate') {
+        const sundae = {};
+        // request ice cream
+        // get cone
+        // warm up ice cream scoop
+        // scoop generous portion into cone!
+    }, Math.random() * 2000);
+});
+```
+
+Indicate a successful request or a failed one
+
+```javascript
+new Promise(function (resolve, reject) {
+    window.setTimeout(function createSundae(flavor = 'chocolate') {
+        const sundae = {};
+        // request ice cream
+        // get cone
+        // warm up ice cream scoop
+        // scoop generous portion into cone!
+        if ( /* iceCreamConeIsEmpty(flavor) */ ) {
+            reject(`Sorry, we're out of that flavor :-(`);
+        }
+        resolve(sundae);
+    }, Math.random() * 2000);
+});
 ```
